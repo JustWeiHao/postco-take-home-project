@@ -1,0 +1,19 @@
+{
+    "include": ["env.d.ts", "**/*.ts", "**/*.tsx", "server.js"],
+    "compilerOptions": {
+      "skipLibCheck": true,
+      "lib": ["DOM", "DOM.Iterable", "ES2022"],
+      "module": "ESNext",
+      "isolatedModules": true,
+      "esModuleInterop": true,
+      "jsx": "react-jsx",
+      "resolveJsonModule": true,
+      "moduleResolution": "Bundler",
+      "baseUrl": ".",
+      "noEmit": true,
+      "paths": {
+        "~/*": ["./app/*"]
+      }
+    }
+}
+  
