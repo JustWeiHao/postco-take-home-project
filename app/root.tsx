@@ -1,11 +1,16 @@
-import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts, useLoaderData } from "@remix-run/react";
+import { json } from "@remix-run/node";
 import type { LinksFunction } from "@remix-run/node";
 import { SearchBar } from "./components/ui/SearchBar";
 import styles from './tailwind.css?url';
-import { GraphQLClient } from 'graphql-request';
+import { getPokemonName } from "./queryHandler"
 
-
-const client = new GraphQLClient('https://beta.pokeapi.co/graphql/v1beta')
+export const loader = async ({ request }) => {
+    const formData = new URLSearchParams(await request.text())
+    const pokemonName = formData.get("pokemon")
+    const pokemons = await getPokemonName(`${pokemonName ? pokemonName : ""}%`)
+    return json({ pokemons });
+}
 
 export const links: LinksFunction = () => [
     { rel: "stylesheet", href: styles },
