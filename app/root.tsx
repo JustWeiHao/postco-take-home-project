@@ -1,23 +1,21 @@
 import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import type { LinksFunction, ActionFunctionArgs } from "@remix-run/node";
 import { SearchBar } from "./components/ui/SearchBar";
 import styles from './tailwind.css?url';
-import { getPokemonName } from "./queryHandler"
-import { useEffect, useState } from "react";
+// import { getPokemonName } from "./queryHandler"
 
-export const loader = async ({ request }) => {
-    const formData = new URLSearchParams(await request.text())
-    const pokemonName = formData.get("pokemon")
-    const pokemons = await getPokemonName(`${pokemonName ? pokemonName : ""}%`)
-    return json({ pokemons });
-}
+// export const loader = async ({ request }) => {
+//     const formData = new URLSearchParams(await request.text())
+//     const pokemonName = formData.get("pokemon")
+//     const pokemons = await getPokemonName(`${pokemonName ? pokemonName : ""}%`)
+//     return json({ pokemons });
+// }
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
     const formData = await request.formData();
-    const pokemonPrefix = formData.get("pokemon");
-    const pokemonId = await getPokemonName(`${pokemonPrefix ? pokemonPrefix : ""}%`)
-    return redirect("/");
+    const pokemonId = formData.get("pokemonId");
+    return redirect(`/pokemons/${pokemonId}`);
 }
 
 export const links: LinksFunction = () => [
@@ -42,7 +40,7 @@ export default function App() {
                 <Links />
             </head>
             <body>
-                <h1>Hello world!</h1>
+                <h1>Welcome to My Pokedex</h1>
                 <SearchBar />
                 <Outlet />
                 <Scripts />

@@ -1,10 +1,16 @@
 import { getPokemonInfo } from "../queryHandler";
-import { json, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { useParams, useLoaderData } from "@remix-run/react";
 
 export const loader = async() => {
-    const pokemons = await getPokemonInfo(1)
+    const pokemons = await getPokemonInfo(1);
     return pokemons;
+}
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+    const formData = new URLSearchParams(await request.text());
+    const pokemonId = formData.get("pokemon");
+    return redirect(`/pokemons.${pokemonId}`);
 }
 
 export default function Home() {
