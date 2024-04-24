@@ -6,7 +6,7 @@ const client = new GraphQLClient('https://beta.pokeapi.co/graphql/v1beta')
 
 const pokemonNameId = gql`
     query PokeAPIquery($searchQuery: String!) {
-        pokemon_v2_pokemon(where: {name: {_like: $searchQuery}}) {
+        pokemon_v2_pokemon(where: {name: {_like: $searchQuery}}, limit: 10) {
             id
             name
         }

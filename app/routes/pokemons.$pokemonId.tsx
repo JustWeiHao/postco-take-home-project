@@ -1,8 +1,8 @@
 import { getPokemonInfo } from "../queryHandler";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useParams, useLoaderData } from "@remix-run/react";
 
-export const loader = async () => {
+export const loader = async() => {
     const pokemons = await getPokemonInfo(1)
     return pokemons;
 }
