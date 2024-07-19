@@ -1,37 +1,57 @@
-import { getPokemonInfo } from "../queryHandler";
-import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { useParams, useLoaderData } from "@remix-run/react";
+import { Box, Card, CardContent, Grid, Tab } from "@mui/material";
+import { getPokemonInfo } from "~/queryHandler";
+import type { PokemonInfo } from "~/queryHandler";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { PokemonInfoCard } from "~/components/PokemonInfoCard";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { useState } from "react";
+import { capitaliseInitial } from "~/utils/utils";
 
-export const loader = async() => {
-    const pokemons = await getPokemonInfo(1);
-    return pokemons;
+
+export const loader = async({ params}: LoaderFunctionArgs) => {
+    return await getPokemonInfo(Number.parseInt(params.pokemonId));
 }
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-    const formData = new URLSearchParams(await request.text());
-    const pokemonId = formData.get("pokemon");
-    return redirect(`/pokemons.${pokemonId}`);
+const processPokemonMoveLevel = (level: number) : string => {
+    return `Level ${level}`;
 }
 
 export default function Home() {
-    const pokemons = useLoaderData()["pokemon_v2_pokemon"][0]
-    const pokemonBaseExperience = pokemons["base_experience"]
-    const pokemonHeight = pokemons["height"]
-    const pokemonWeight = pokemons["weight"]
-    const pokemonMoves = pokemons["pokemon_v2_pokemonmoves"]
-    const pokemonTypes = pokemons["pokemon_v2_pokemontypes"]
+    const [tabValue, setTabValue] = useState("stats");
+
+    const handleChange = (_ev: React.SyntheticEvent, newValue: string) => {
+        setTabValue(newValue);
+    }
+    const pokemon: PokemonInfo = useLoaderData()["pokemon_v2_pokemon"][0];
     return (
-        <div>
-            {`Base Experience: ${pokemonBaseExperience}`}
-            <br />
-            {`Height: ${pokemonHeight}`}
-            <br />
-            {`Weight: ${pokemonWeight}`}
-            <br />
-            {pokemonTypes.map(type => type["pokemon_v2_type"]["name"] + ", ")}
-            <br />
-            {pokemonMoves.map(move => move["pokemon_v2_move"]["name"] + ", ")}
-            {/* {pokemonTypes} */}
-        </div>
+        <Box>
+            <PokemonInfoCard pokemon={pokemon} />
+            <TabContext value={tabValue}>
+                <TabList onChange={handleChange}>
+                    <Tab label="Stats" value="stats" />
+                    <Tab label="Moves" value="moves"/>
+                </TabList>
+                <TabPanel value="stats">
+
+                </TabPanel>
+                <TabPanel value="moves">
+                    <Grid container spacing={2}>
+                        {pokemon.pokemon_v2_pokemonmoves.map(move => (
+                            <Grid item xs={12 / 3} key={`${move.pokemon_v2_move.name}${move.level}`}>
+                                <Card>
+                                    <CardContent>
+                                        {capitaliseInitial(move.pokemon_v2_move.name, "-")}
+                                    </CardContent>
+                                    <CardContent>
+                                        {processPokemonMoveLevel(move.level)}
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        ))}    
+                    </Grid>           
+                </TabPanel>
+            </TabContext>
+        </Box>
     );
 }
