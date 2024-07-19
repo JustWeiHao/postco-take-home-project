@@ -1,5 +1,6 @@
 {
     "include": ["env.d.ts", "**/*.ts", "**/*.tsx", "server.js"],
+    "exclude": ["node-modules"],
     "compilerOptions": {
       "skipLibCheck": true,
       "lib": ["DOM", "DOM.Iterable", "ES2022"],
@@ -9,11 +10,11 @@
       "jsx": "react-jsx",
       "resolveJsonModule": true,
       "moduleResolution": "Bundler",
-      "baseUrl": ".",
       "noEmit": true,
+      "baseUrl": "./",
       "paths": {
         "~/*": ["./app/*"]
-      }
-    }
+      },
+    },
 }
   
